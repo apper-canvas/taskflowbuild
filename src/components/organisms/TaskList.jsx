@@ -1,5 +1,6 @@
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import TaskItem from './TaskItem';
+import TaskItem from '@/components/organisms/TaskItem';
 
 const TaskList = ({ tasks, categories = [], onUpdateTask, onDeleteTask }) => {
   return (

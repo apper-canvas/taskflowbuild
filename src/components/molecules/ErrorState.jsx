@@ -1,5 +1,9 @@
+import React from 'react';
 import { motion } from 'framer-motion';
-import ApperIcon from './ApperIcon';
+import ApperIcon from '@/components/ApperIcon';
+import Heading from '@/components/atoms/Heading';
+import Paragraph from '@/components/atoms/Paragraph';
+import Button from '@/components/atoms/Button';
 
 const ErrorState = ({ message, onRetry }) => {
   return (
@@ -16,16 +20,16 @@ const ErrorState = ({ message, onRetry }) => {
         <ApperIcon name="AlertTriangle" className="w-16 h-16 text-error mx-auto" />
       </motion.div>
       
-      <h3 className="text-xl font-heading font-semibold text-gray-900 mb-2">
+      <Heading level="h3" className="text-xl font-semibold mb-2">
         Oops! Something went wrong
-      </h3>
+      </Heading>
       
-      <p className="text-surface-600 mb-6 max-w-md mx-auto">
+      <Paragraph className="mb-6 max-w-md mx-auto">
         {message || 'We encountered an error while loading your tasks. Please try again.'}
-      </p>
+      </Paragraph>
       
       {onRetry && (
-        <motion.button
+        <Button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={onRetry}
@@ -33,7 +37,7 @@ const ErrorState = ({ message, onRetry }) => {
         >
           <ApperIcon name="RefreshCw" className="w-5 h-5" />
           <span>Try Again</span>
-        </motion.button>
+        </Button>
       )}
     </motion.div>
   );

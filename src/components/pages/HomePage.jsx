@@ -1,19 +1,20 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
-import taskService from '../services/api/taskService';
-import categoryService from '../services/api/categoryService';
-import MainFeature from '../components/MainFeature';
-import TaskList from '../components/TaskList';
-import QuickAddForm from '../components/QuickAddForm';
-import FilterSidebar from '../components/FilterSidebar';
-import EmptyState from '../components/EmptyState';
-import SkeletonLoader from '../components/SkeletonLoader';
-import ErrorState from '../components/ErrorState';
-import ApperIcon from '../components/ApperIcon';
 import { format } from 'date-fns';
 
-const Home = () => {
+import taskService from '@/services/api/taskService';
+import categoryService from '@/services/api/categoryService';
+
+import AppHeader from '@/components/organisms/AppHeader';
+import FilterSidebar from '@/components/organisms/FilterSidebar';
+import QuickAddForm from '@/components/organisms/QuickAddForm';
+import TaskList from '@/components/organisms/TaskList';
+import EmptyState from '@/components/molecules/EmptyState';
+import SkeletonLoader from '@/components/molecules/SkeletonLoader';
+import ErrorState from '@/components/molecules/ErrorState';
+
+const HomePage = () => {
   const [tasks, setTasks] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -48,7 +49,14 @@ const Home = () => {
     loadData();
   }, []);
 
-  const filteredTasks = tasks.filter(task => {
+  const enhancedTasks = tasks.map(task => {
+    const today = format(new Date(), 'yyyy-MM-dd');
+    const isOverdue = task.dueDate && format(new Date(task.dueDate), 'yyyy-MM-dd') < today && !task.completed;
+    return { ...task, isOverdue };
+  });
+
+
+  const filteredTasks = enhancedTasks.filter(task => {
     // Show completed filter
     if (!filters.showCompleted && task.completed) return false;
     
@@ -72,18 +80,18 @@ const Home = () => {
     }
 
     // Date range filter
+    const taskDueDate = task.dueDate ? format(new Date(task.dueDate), 'yyyy-MM-dd') : null;
+    const today = format(new Date(), 'yyyy-MM-dd');
+
     if (filters.dateRange === 'today') {
-      const today = format(new Date(), 'yyyy-MM-dd');
-      return task.dueDate === today;
+      return taskDueDate === today;
     } else if (filters.dateRange === 'overdue') {
-      const today = format(new Date(), 'yyyy-MM-dd');
-      return task.dueDate < today && !task.completed;
+      return taskDueDate && taskDueDate < today && !task.completed;
     } else if (filters.dateRange === 'upcoming') {
-      const today = format(new Date(), 'yyyy-MM-dd');
-      return task.dueDate > today;
+      return taskDueDate && taskDueDate > today;
     }
 
-    return true;
+    return true; // For 'all' tasks
   });
 
   const completedToday = tasks.filter(task => {
@@ -161,66 +169,14 @@ const Home = () => {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-white">
-      {/* Header */}
-      <header className="flex-shrink-0 h-16 bg-white border-b border-surface-200 px-6 flex items-center justify-between z-40">
-        <div className="flex items-center space-x-4">
-          <h1 className="text-xl font-heading font-bold text-gray-900">TaskFlow Pro</h1>
-          <div className="flex items-center space-x-2">
-            <div className="relative w-12 h-12">
-              <svg className="w-12 h-12 transform -rotate-90">
-                <circle
-                  cx="24"
-                  cy="24"
-                  r="20"
-                  stroke="#E5E7EB"
-                  strokeWidth="4"
-                  fill="none"
-                />
-                <circle
-                  cx="24"
-                  cy="24"
-                  r="20"
-                  stroke="#5B21B6"
-                  strokeWidth="4"
-                  fill="none"
-                  strokeDasharray={`${progressPercentage * 1.257} 125.7`}
-                  className="transition-all duration-300"
-                />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xs font-semibold text-gray-700">
-                  {Math.round(progressPercentage)}%
-                </span>
-              </div>
-            </div>
-            <div className="text-sm text-gray-600">
-              {completedToday} of {totalToday} completed today
-            </div>
-          </div>
-        </div>
-        
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search tasks..."
-              value={filters.searchQuery}
-              onChange={(e) => setFilters(prev => ({...prev, searchQuery: e.target.value}))}
-              className="w-80 pl-10 pr-4 py-2 border border-surface-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-            />
-            <ApperIcon name="Search" className="absolute left-3 top-2.5 w-5 h-5 text-surface-400" />
-          </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setShowQuickAdd(!showQuickAdd)}
-            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center space-x-2"
-          >
-            <ApperIcon name="Plus" className="w-5 h-5" />
-            <span>Quick Add</span>
-          </motion.button>
-        </div>
-      </header>
+      <AppHeader
+        completedToday={completedToday}
+        totalToday={totalToday}
+        progressPercentage={progressPercentage}
+        filters={filters}
+        onFiltersChange={setFilters}
+        onQuickAddToggle={() => setShowQuickAdd(!showQuickAdd)}
+      />
 
       {/* Quick Add Form */}
       {showQuickAdd && (
@@ -276,4 +232,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomePage;

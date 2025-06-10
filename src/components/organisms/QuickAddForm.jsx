@@ -1,7 +1,13 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { format, addDays } from 'date-fns';
-import ApperIcon from './ApperIcon';
+import ApperIcon from '@/components/ApperIcon';
+import Input from '@/components/atoms/Input';
+import Textarea from '@/components/atoms/Textarea';
+import Select from '@/components/atoms/Select';
+import Button from '@/components/atoms/Button';
+import Heading from '@/components/atoms/Heading';
+import FormField from '@/components/molecules/FormField';
 
 const QuickAddForm = ({ categories = [], onSubmit, onCancel }) => {
   const [title, setTitle] = useState('');
@@ -50,77 +56,67 @@ const QuickAddForm = ({ categories = [], onSubmit, onCancel }) => {
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-heading font-semibold text-gray-900">Add New Task</h3>
-          <button
+          <Heading level="h3" className="text-lg font-semibold">Add New Task</Heading>
+          <Button
             type="button"
             onClick={onCancel}
             className="p-2 text-surface-400 hover:text-surface-600 transition-colors"
           >
             <ApperIcon name="X" className="w-5 h-5" />
-          </button>
+          </Button>
         </div>
 
         {/* Title */}
-        <div>
-          <input
+        <Input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="What needs to be done?"
-            className="w-full px-4 py-3 border border-surface-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-lg"
+            className="py-3 text-lg"
             autoFocus
-          />
-        </div>
+        />
 
         {/* Description */}
-        <div>
-          <textarea
+        <Textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Add a description (optional)"
-            className="w-full px-4 py-3 border border-surface-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
             rows={2}
-          />
-        </div>
+        />
 
         {/* Priority and Category Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Priority */}
-          <div>
-            <label className="block text-sm font-medium text-surface-700 mb-2">Priority</label>
-            <select
+          <FormField label="Priority">
+            <Select
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
-              className="w-full px-3 py-2 border border-surface-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             >
               <option value="High">High</option>
               <option value="Medium">Medium</option>
               <option value="Low">Low</option>
-            </select>
-          </div>
+            </Select>
+          </FormField>
 
           {/* Category */}
-          <div>
-            <label className="block text-sm font-medium text-surface-700 mb-2">Category</label>
-            <select
+          <FormField label="Category">
+            <Select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full px-3 py-2 border border-surface-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             >
               <option value="">Select category</option>
               {categories.map(cat => (
                 <option key={cat.id} value={cat.name}>{cat.name}</option>
               ))}
-            </select>
-          </div>
+            </Select>
+          </FormField>
         </div>
 
         {/* Due Date */}
-        <div>
-          <label className="block text-sm font-medium text-surface-700 mb-2">Due Date</label>
-          <div className="flex space-x-2">
+        <FormField label="Due Date">
+          <div className="flex flex-wrap gap-2">
             {quickDateOptions.map(option => (
-              <button
+              <Button
                 key={option.label}
                 type="button"
                 onClick={() => setDueDate(option.value)}
@@ -129,34 +125,35 @@ const QuickAddForm = ({ categories = [], onSubmit, onCancel }) => {
                     ? 'bg-primary text-white'
                     : 'bg-surface-100 text-surface-700 hover:bg-surface-200'
                 }`}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
                 {option.label}
-              </button>
+              </Button>
             ))}
-            <input
+            <Input
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              className="px-3 py-2 border border-surface-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              className="px-3 py-2"
             />
           </div>
-        </div>
+        </FormField>
 
         {/* Tags */}
-        <div>
-          <label className="block text-sm font-medium text-surface-700 mb-2">Tags</label>
-          <input
+        <FormField label="Tags">
+          <Input
             type="text"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
             placeholder="Enter tags separated by commas"
-            className="w-full px-3 py-2 border border-surface-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            className="px-3 py-2"
           />
-        </div>
+        </FormField>
 
         {/* Submit Buttons */}
         <div className="flex justify-end space-x-3 pt-4">
-          <motion.button
+          <Button
             type="button"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -164,8 +161,8 @@ const QuickAddForm = ({ categories = [], onSubmit, onCancel }) => {
             className="px-4 py-2 text-surface-700 bg-surface-100 rounded-lg hover:bg-surface-200 transition-colors"
           >
             Cancel
-          </motion.button>
-          <motion.button
+          </Button>
+          <Button
             type="submit"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -173,7 +170,7 @@ const QuickAddForm = ({ categories = [], onSubmit, onCancel }) => {
             className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Add Task
-          </motion.button>
+          </Button>
         </div>
       </form>
     </motion.div>

@@ -1,5 +1,10 @@
+import React from 'react';
 import { motion } from 'framer-motion';
-import ApperIcon from './ApperIcon';
+import ApperIcon from '@/components/ApperIcon';
+import Checkbox from '@/components/atoms/Checkbox';
+import Button from '@/components/atoms/Button';
+import Heading from '@/components/atoms/Heading';
+import Label from '@/components/atoms/Label';
 
 const FilterSidebar = ({ categories = [], filters, onFiltersChange, tasks = [] }) => {
   const dateRangeOptions = [
@@ -51,19 +56,21 @@ const FilterSidebar = ({ categories = [], filters, onFiltersChange, tasks = [] }
     return tasks.filter(task => !task.completed).length;
   };
 
+  const hasActiveFilters = filters.categories.length > 0 || filters.priorities.length > 0 || filters.searchQuery || filters.dateRange !== 'today' || filters.showCompleted;
+
   return (
     <aside className="w-64 bg-surface-50 border-r border-surface-200 overflow-y-auto">
       <div className="p-6 space-y-6">
         {/* Date Range Filters */}
         <div>
-          <h3 className="text-sm font-semibold text-surface-900 mb-3">Views</h3>
+          <Heading level="h3" className="text-sm font-semibold mb-3">Views</Heading>
           <div className="space-y-1">
             {dateRangeOptions.map(option => {
               const count = getTaskCount(option.id);
               const isActive = filters.dateRange === option.id;
               
               return (
-                <motion.button
+                <Button
                   key={option.id}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -88,7 +95,7 @@ const FilterSidebar = ({ categories = [], filters, onFiltersChange, tasks = [] }
                       {count}
                     </span>
                   )}
-                </motion.button>
+                </Button>
               );
             })}
           </div>
@@ -96,20 +103,18 @@ const FilterSidebar = ({ categories = [], filters, onFiltersChange, tasks = [] }
 
         {/* Priority Filters */}
         <div>
-          <h3 className="text-sm font-semibold text-surface-900 mb-3">Priority</h3>
+          <Heading level="h3" className="text-sm font-semibold mb-3">Priority</Heading>
           <div className="space-y-2">
             {priorityOptions.map(priority => (
-              <label key={priority.id} className="flex items-center space-x-3 cursor-pointer">
-                <input
-                  type="checkbox"
+              <Label key={priority.id} className="flex items-center space-x-3 cursor-pointer">
+                <Checkbox
                   checked={filters.priorities.includes(priority.id)}
                   onChange={() => handlePriorityToggle(priority.id)}
-                  className="rounded border-surface-300 text-primary focus:ring-primary focus:ring-offset-0"
                 />
                 <span className={`text-sm font-medium ${priority.color}`}>
                   {priority.label}
                 </span>
-              </label>
+              </Label>
             ))}
           </div>
         </div>
@@ -117,15 +122,13 @@ const FilterSidebar = ({ categories = [], filters, onFiltersChange, tasks = [] }
         {/* Category Filters */}
         {categories.length > 0 && (
           <div>
-            <h3 className="text-sm font-semibold text-surface-900 mb-3">Categories</h3>
+            <Heading level="h3" className="text-sm font-semibold mb-3">Categories</Heading>
             <div className="space-y-2">
               {categories.map(category => (
-                <label key={category.id} className="flex items-center space-x-3 cursor-pointer">
-                  <input
-                    type="checkbox"
+                <Label key={category.id} className="flex items-center space-x-3 cursor-pointer">
+                  <Checkbox
                     checked={filters.categories.includes(category.name)}
                     onChange={() => handleCategoryToggle(category.name)}
-                    className="rounded border-surface-300 text-primary focus:ring-primary focus:ring-offset-0"
                   />
                   <div className="flex items-center space-x-2">
                     <ApperIcon 
@@ -136,7 +139,7 @@ const FilterSidebar = ({ categories = [], filters, onFiltersChange, tasks = [] }
                       {category.name}
                     </span>
                   </div>
-                </label>
+                </Label>
               ))}
             </div>
           </div>
@@ -144,25 +147,23 @@ const FilterSidebar = ({ categories = [], filters, onFiltersChange, tasks = [] }
 
         {/* Show Completed Toggle */}
         <div>
-          <label className="flex items-center space-x-3 cursor-pointer">
-            <input
-              type="checkbox"
+          <Label className="flex items-center space-x-3 cursor-pointer">
+            <Checkbox
               checked={filters.showCompleted}
               onChange={(e) => onFiltersChange(prev => ({
                 ...prev,
                 showCompleted: e.target.checked
               }))}
-              className="rounded border-surface-300 text-primary focus:ring-primary focus:ring-offset-0"
             />
             <span className="text-sm font-medium text-surface-700">
               Show completed tasks
             </span>
-          </label>
+          </Label>
         </div>
 
         {/* Clear Filters */}
-        {(filters.categories.length > 0 || filters.priorities.length > 0 || filters.searchQuery) && (
-          <motion.button
+        {hasActiveFilters && (
+          <Button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => onFiltersChange({
@@ -172,10 +173,10 @@ const FilterSidebar = ({ categories = [], filters, onFiltersChange, tasks = [] }
               searchQuery: '',
               showCompleted: false
             })}
-            className="w-full px-3 py-2 text-sm text-surface-600 hover:text-surface-800 transition-colors"
+            className="w-full px-3 py-2 text-sm text-surface-600 hover:text-surface-800 transition-colors bg-transparent border-none"
           >
             Clear all filters
-          </motion.button>
+          </Button>
         )}
       </div>
     </aside>

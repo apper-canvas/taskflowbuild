@@ -1,5 +1,9 @@
+import React from 'react';
 import { motion } from 'framer-motion';
-import ApperIcon from './ApperIcon';
+import ApperIcon from '@/components/ApperIcon';
+import Heading from '@/components/atoms/Heading';
+import Paragraph from '@/components/atoms/Paragraph';
+import Button from '@/components/atoms/Button';
 
 const EmptyState = ({ title, description, actionLabel, onAction, icon = 'CheckSquare' }) => {
   return (
@@ -16,16 +20,16 @@ const EmptyState = ({ title, description, actionLabel, onAction, icon = 'CheckSq
         <ApperIcon name={icon} className="w-16 h-16 text-surface-300 mx-auto" />
       </motion.div>
       
-      <h3 className="text-xl font-heading font-semibold text-gray-900 mb-2">
+      <Heading level="h3" className="text-xl font-semibold mb-2">
         {title}
-      </h3>
+      </Heading>
       
-      <p className="text-surface-600 mb-6 max-w-md mx-auto">
+      <Paragraph className="mb-6 max-w-md mx-auto">
         {description}
-      </p>
+      </Paragraph>
       
       {actionLabel && onAction && (
-        <motion.button
+        <Button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={onAction}
@@ -33,7 +37,7 @@ const EmptyState = ({ title, description, actionLabel, onAction, icon = 'CheckSq
         >
           <ApperIcon name="Plus" className="w-5 h-5" />
           <span>{actionLabel}</span>
-        </motion.button>
+        </Button>
       )}
     </motion.div>
   );
