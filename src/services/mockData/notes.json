@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "title": "Project Planning Notes",
+    "content": "Key objectives for Q1:\n- Complete user research phase\n- Design system implementation\n- Beta testing with select users\n\nTimeline: 6-8 weeks\nBudget considerations: Need to account for additional UX resources",
+    "category": "Work",
+    "tags": ["planning", "project", "q1"],
+    "isPinned": false,
+    "createdAt": "2024-01-08T10:30:00.000Z",
+    "updatedAt": "2024-01-12T15:45:00.000Z"
+  },
+  {
+    "id": "2",
+    "title": "Recipe Ideas",
+    "content": "Healthy meal prep ideas for the week:\n\n**Breakfast:**\n- Overnight oats with berries\n- Greek yogurt parfait\n\n**Lunch:**\n- Quinoa Buddha bowls\n- Mediterranean wraps\n\n**Dinner:**\n- Baked salmon with vegetables\n- Lentil curry with brown rice",
+    "category": "Personal",
+    "tags": ["recipes", "meal-prep", "healthy"],
+    "isPinned": true,
+    "createdAt": "2024-01-10T18:20:00.000Z",
+    "updatedAt": "2024-01-10T18:20:00.000Z"
+  },
+  {
+    "id": "3",
+    "title": "Learning Goals 2024",
+    "content": "Professional development objectives:\n\n1. **Technical Skills**\n   - Advanced React patterns\n   - TypeScript mastery\n   - System design principles\n\n2. **Soft Skills**\n   - Public speaking\n   - Team leadership\n   - Strategic thinking\n\n3. **Certifications**\n   - AWS Solutions Architect\n   - Scrum Master certification",
+    "category": "Learning",
+    "tags": ["goals", "development", "career"],
+    "isPinned": false,
+    "createdAt": "2024-01-05T09:15:00.000Z",
+    "updatedAt": "2024-01-11T14:30:00.000Z"
+  }
+]
