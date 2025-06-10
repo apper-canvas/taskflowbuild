@@ -21,12 +21,12 @@ const QuickAddForm = ({ categories = [], onSubmit, onCancel }) => {
     e.preventDefault();
     if (!title.trim()) return;
 
-    const taskData = {
+const taskData = {
       title: title.trim(),
       description: description.trim(),
       priority,
       category: category || 'General',
-      dueDate,
+      due_date: dueDate,
       tags: tags.split(',').map(tag => tag.trim()).filter(Boolean),
       completed: false
     };
