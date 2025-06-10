@@ -1,0 +1,62 @@
+[
+  {
+    "id": "1",
+    "title": "Review quarterly budget proposal",
+    "description": "Analyze Q4 budget allocations and prepare recommendations for the finance team meeting",
+    "priority": "High",
+    "dueDate": "2024-01-15",
+    "category": "Work",
+    "tags": ["finance", "quarterly", "urgent"],
+    "completed": false,
+    "createdAt": "2024-01-10T09:00:00.000Z",
+    "updatedAt": "2024-01-10T09:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "title": "Schedule dentist appointment",
+    "description": "Annual cleaning and checkup - call Dr. Smith's office",
+    "priority": "Medium",
+    "dueDate": "2024-01-15",
+    "category": "Personal",
+    "tags": ["health", "appointment"],
+    "completed": false,
+    "createdAt": "2024-01-12T14:30:00.000Z",
+    "updatedAt": "2024-01-12T14:30:00.000Z"
+  },
+  {
+    "id": "3",
+    "title": "Complete project documentation",
+    "description": "Finalize technical specifications and user guide for the new client portal",
+    "priority": "High",
+    "dueDate": "2024-01-16",
+    "category": "Work",
+    "tags": ["documentation", "client", "portal"],
+    "completed": false,
+    "createdAt": "2024-01-08T11:15:00.000Z",
+    "updatedAt": "2024-01-08T11:15:00.000Z"
+  },
+  {
+    "id": "4",
+    "title": "Plan weekend trip to mountains",
+    "description": "Research accommodations, hiking trails, and weather forecast",
+    "priority": "Low",
+    "dueDate": "2024-01-18",
+    "category": "Personal",
+    "tags": ["travel", "hiking", "weekend"],
+    "completed": true,
+    "createdAt": "2024-01-05T16:45:00.000Z",
+    "updatedAt": "2024-01-13T20:30:00.000Z"
+  },
+  {
+    "id": "5",
+    "title": "Prepare presentation for client meeting",
+    "description": "Create slides covering project timeline, deliverables, and budget breakdown",
+    "priority": "High",
+    "dueDate": "2024-01-17",
+    "category": "Work",
+    "tags": ["presentation", "client", "meeting"],
+    "completed": false,
+    "createdAt": "2024-01-11T08:20:00.000Z",
+    "updatedAt": "2024-01-11T08:20:00.000Z"
+  }
+]
