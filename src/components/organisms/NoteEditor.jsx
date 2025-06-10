@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import ReactQuill from 'react-quill';
 import debounce from 'lodash.debounce';
@@ -10,22 +10,35 @@ import Select from '@/components/atoms/Select';
 import TagInput from '@/components/molecules/TagInput';
 import noteService from '@/services/api/noteService';
 
-const NoteEditor = ({ note, onUpdate, folders, tags }) => {
-  const [title, setTitle] = useState(note.title);
-  const [content, setContent] = useState(note.content);
-  const [selectedFolder, setSelectedFolder] = useState(note.folder);
-  const [selectedTags, setSelectedTags] = useState(note.tags);
+const NoteEditor = ({ note, onUpdate, folders = [], tags = [] }) => {
+  // Defensive checks for required props
+  if (!note) {
+    return (
+      <div className="h-full flex items-center justify-center text-surface-500">
+        <p>No note selected</p>
+      </div>
+    );
+  }
+
+  const [title, setTitle] = useState(note?.title || '');
+  const [content, setContent] = useState(note?.content || '');
+  const [selectedFolder, setSelectedFolder] = useState(note?.folder || '');
+  const [selectedTags, setSelectedTags] = useState(note?.tags || []);
   const [saving, setSaving] = useState(false);
-  const [lastSaved, setLastSaved] = useState(new Date(note.updatedAt));
+  const [lastSaved, setLastSaved] = useState(note?.updatedAt ? new Date(note.updatedAt) : new Date());
   const quillRef = useRef(null);
 
-  // Auto-save functionality
-  const debouncedSave = useRef(
+  // Memoized auto-save function to prevent recreation
+  const debouncedSave = useCallback(
     debounce(async (noteId, updates) => {
+      if (!noteId) return;
+      
       try {
         setSaving(true);
         const updatedNote = await noteService.update(noteId, updates);
-        onUpdate(updatedNote);
+        if (onUpdate) {
+          onUpdate(updatedNote);
+        }
         setLastSaved(new Date());
       } catch (error) {
         toast.error('Failed to auto-save note');
@@ -33,22 +46,39 @@ const NoteEditor = ({ note, onUpdate, folders, tags }) => {
       } finally {
         setSaving(false);
       }
-    }, 1000)
-  ).current;
+    }, 1000),
+    [onUpdate]
+  );
+
+  // Cleanup debounced function on unmount
+  useEffect(() => {
+    return () => {
+      debouncedSave.cancel();
+    };
+  }, [debouncedSave]);
 
   // Update local state when note changes
   useEffect(() => {
-    setTitle(note.title);
-    setContent(note.content);
-    setSelectedFolder(note.folder);
-    setSelectedTags(note.tags);
-    setLastSaved(new Date(note.updatedAt));
-  }, [note]);
+    if (note) {
+      setTitle(note.title || '');
+      setContent(note.content || '');
+      setSelectedFolder(note.folder || '');
+      setSelectedTags(note.tags || []);
+      setLastSaved(note.updatedAt ? new Date(note.updatedAt) : new Date());
+    }
+  }, [note.id]); // Only depend on note.id to prevent unnecessary updates
 
-  // Auto-save when content changes
+  // Auto-save when content changes - optimized dependencies
   useEffect(() => {
-    if (note.id && (title !== note.title || content !== note.content || 
-        selectedFolder !== note.folder || JSON.stringify(selectedTags) !== JSON.stringify(note.tags))) {
+    if (!note?.id) return;
+    
+    const hasChanges = 
+      title !== (note.title || '') || 
+      content !== (note.content || '') || 
+      selectedFolder !== (note.folder || '') || 
+      JSON.stringify(selectedTags) !== JSON.stringify(note.tags || []);
+
+    if (hasChanges) {
       debouncedSave(note.id, {
         title,
         content,
@@ -56,9 +86,14 @@ const NoteEditor = ({ note, onUpdate, folders, tags }) => {
         tags: selectedTags
       });
     }
-  }, [title, content, selectedFolder, selectedTags, note.id, note.title, note.content, note.folder, note.tags, debouncedSave]);
+  }, [title, content, selectedFolder, selectedTags, note?.id, debouncedSave]);
 
   const handleManualSave = async () => {
+if (!note?.id) {
+      toast.error('Cannot save note: No note ID');
+      return;
+    }
+
     try {
       setSaving(true);
       const updatedNote = await noteService.update(note.id, {
@@ -67,7 +102,10 @@ const NoteEditor = ({ note, onUpdate, folders, tags }) => {
         folder: selectedFolder,
         tags: selectedTags
       });
-      onUpdate(updatedNote);
+      
+      if (onUpdate) {
+        onUpdate(updatedNote);
+      }
       setLastSaved(new Date());
       toast.success('Note saved');
     } catch (error) {
@@ -79,10 +117,17 @@ const NoteEditor = ({ note, onUpdate, folders, tags }) => {
   };
 
   const handleTogglePin = async () => {
+    if (!note?.id) {
+      toast.error('Cannot toggle pin: No note ID');
+      return;
+    }
+
     try {
       const updatedNote = await noteService.togglePin(note.id);
-      onUpdate(updatedNote);
-      toast.success(updatedNote.isPinned ? 'Note pinned' : 'Note unpinned');
+      if (onUpdate) {
+        onUpdate(updatedNote);
+      }
+      toast.success(updatedNote?.isPinned ? 'Note pinned' : 'Note unpinned');
     } catch (error) {
       toast.error('Failed to toggle pin');
       console.error('Pin toggle error:', error);
@@ -124,9 +169,12 @@ const NoteEditor = ({ note, onUpdate, folders, tags }) => {
     }
   };
 
-  const folderOptions = [
+const folderOptions = [
     { value: '', label: 'Select folder...' },
-    ...folders.map(folder => ({ value: folder, label: folder })),
+    ...(folders || []).map(folder => ({ 
+      value: folder, 
+      label: folder 
+    })),
     { value: 'new', label: '+ Create new folder' }
   ];
 
@@ -181,9 +229,8 @@ const NoteEditor = ({ note, onUpdate, folders, tags }) => {
               </div>
             )}
           </div>
-          
-          <div className="flex items-center space-x-1 text-xs">
-            <span>{content.replace(/<[^>]*>/g, '').length} characters</span>
+<div className="flex items-center space-x-1 text-xs">
+            <span>{(content || '').replace(/<[^>]*>/g, '').length} characters</span>
           </div>
         </div>
 
@@ -201,9 +248,9 @@ const NoteEditor = ({ note, onUpdate, folders, tags }) => {
           
           <div className="flex items-center space-x-2">
             <TagIcon className="w-4 h-4 text-surface-500" />
-            <TagInput
-              tags={selectedTags}
-              availableTags={tags}
+<TagInput
+              tags={selectedTags || []}
+              availableTags={tags || []}
               onChange={setSelectedTags}
               placeholder="Add tags..."
             />
