@@ -5,6 +5,9 @@
 /* Import react-toastify CSS */
 @import 'react-toastify/dist/ReactToastify.css';
 
+/* Import Quill CSS */
+@import 'react-quill/dist/quill.snow.css';
+
 /* Ensure scrollbars are visible */
 body {
   overflow-y: auto;
