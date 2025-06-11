@@ -28,26 +28,36 @@ const HomePage = () => {
   });
   const [showQuickAdd, setShowQuickAdd] = useState(false);
 
+const loadData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [tasksData, categoriesData] = await Promise.all([
+        taskService.getAll(),
+        categoryService.getAll()
+      ]);
+      setTasks(tasksData);
+      setCategories(categoriesData);
+    } catch (err) {
+      setError(err.message || 'Failed to load data');
+      toast.error('Failed to load tasks');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const [tasksData, categoriesData] = await Promise.all([
-          taskService.getAll(),
-          categoryService.getAll()
-        ]);
-        setTasks(tasksData);
-        setCategories(categoriesData);
-      } catch (err) {
-        setError(err.message || 'Failed to load data');
-        toast.error('Failed to load tasks');
-      } finally {
-        setLoading(false);
-      }
-    };
     loadData();
   }, []);
+
+  const handleCategoryRefresh = async () => {
+    try {
+      const categoriesData = await categoryService.getAll();
+      setCategories(categoriesData);
+    } catch (err) {
+      toast.error('Failed to refresh categories');
+    }
+  };
 
   const enhancedTasks = tasks.map(task => {
     const today = format(new Date(), 'yyyy-MM-dd');
@@ -196,12 +206,13 @@ const HomePage = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Filter Sidebar */}
+{/* Filter Sidebar */}
         <FilterSidebar
           categories={categories}
           filters={filters}
           onFiltersChange={setFilters}
           tasks={tasks}
+          onCategoryRefresh={handleCategoryRefresh}
         />
 
         {/* Task List */}

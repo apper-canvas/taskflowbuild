@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Plus } from 'lucide-react';
 import ApperIcon from '@/components/ApperIcon';
 import Checkbox from '@/components/atoms/Checkbox';
 import Button from '@/components/atoms/Button';
 import Heading from '@/components/atoms/Heading';
 import Label from '@/components/atoms/Label';
+import CategoryModal from '@/components/molecules/CategoryModal';
 
-const FilterSidebar = ({ categories = [], filters, onFiltersChange, tasks = [] }) => {
+const FilterSidebar = ({ categories = [], filters, onFiltersChange, tasks = [], onCategoryRefresh }) => {
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  
   const dateRangeOptions = [
-    { id: 'today', label: 'Today', icon: 'Calendar' },
     { id: 'upcoming', label: 'Upcoming', icon: 'Clock' },
     { id: 'overdue', label: 'Overdue', icon: 'AlertCircle' },
     { id: 'all', label: 'All Tasks', icon: 'List' }
@@ -120,9 +123,20 @@ const FilterSidebar = ({ categories = [], filters, onFiltersChange, tasks = [] }
         </div>
 
         {/* Category Filters */}
-        {categories.length > 0 && (
-          <div>
-            <Heading level="h3" className="text-sm font-semibold mb-3">Categories</Heading>
+{/* Category Filters */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <Heading level="h3" className="text-sm font-semibold">Categories</Heading>
+            <Button
+              onClick={() => setShowCategoryModal(true)}
+              variant="ghost"
+              className="p-1.5 rounded-lg hover:bg-surface-100 transition-colors"
+              title="Add Category"
+            >
+              <Plus className="w-4 h-4 text-surface-500" />
+            </Button>
+          </div>
+          {categories.length > 0 ? (
             <div className="space-y-2">
               {categories.map(category => (
                 <Label key={category.id} className="flex items-center space-x-3 cursor-pointer">
@@ -142,9 +156,19 @@ const FilterSidebar = ({ categories = [], filters, onFiltersChange, tasks = [] }
                 </Label>
               ))}
             </div>
-          </div>
-        )}
-
+          ) : (
+            <div className="text-center py-4">
+              <p className="text-sm text-surface-500 mb-2">No categories yet</p>
+              <Button
+                onClick={() => setShowCategoryModal(true)}
+                variant="outline"
+                className="text-xs px-3 py-1 border border-surface-300 text-surface-700 hover:bg-surface-50 rounded-lg transition-colors"
+              >
+                Create First Category
+              </Button>
+            </div>
+          )}
+        </div>
         {/* Show Completed Toggle */}
         <div>
           <Label className="flex items-center space-x-3 cursor-pointer">
@@ -174,13 +198,22 @@ const FilterSidebar = ({ categories = [], filters, onFiltersChange, tasks = [] }
               showCompleted: false
             })}
             className="w-full px-3 py-2 text-sm text-surface-600 hover:text-surface-800 transition-colors bg-transparent border-none"
-          >
+>
             Clear all filters
           </Button>
         )}
       </div>
+
+      {/* Category Modal */}
+      <CategoryModal
+        isOpen={showCategoryModal}
+        onClose={() => setShowCategoryModal(false)}
+        onSuccess={(newCategory) => {
+          onCategoryRefresh?.();
+          setShowCategoryModal(false);
+        }}
+      />
     </aside>
   );
-};
 
 export default FilterSidebar;
