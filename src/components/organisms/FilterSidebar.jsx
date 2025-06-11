@@ -121,11 +121,10 @@ const FilterSidebar = ({ categories = [], filters, onFiltersChange, tasks = [], 
             ))}
           </div>
         </div>
-
-        {/* Category Filters */}
 {/* Category Filters */}
         <div>
           <div className="flex items-center justify-between mb-3">
+            <Heading level="h3" className="text-sm font-semibold">Categories</Heading>
             <Heading level="h3" className="text-sm font-semibold">Categories</Heading>
             <Button
               onClick={() => setShowCategoryModal(true)}
@@ -213,7 +212,8 @@ const FilterSidebar = ({ categories = [], filters, onFiltersChange, tasks = [], 
           setShowCategoryModal(false);
         }}
       />
-    </aside>
+</aside>
   );
+};
 
 export default FilterSidebar;
