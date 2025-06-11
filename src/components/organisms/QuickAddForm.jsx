@@ -151,14 +151,14 @@ const taskData = {
           />
         </FormField>
 
-        {/* Submit Buttons */}
+{/* Submit Buttons */}
         <div className="flex justify-end space-x-3 pt-4">
           <Button
             type="button"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={onCancel}
-            className="px-4 py-2 text-surface-700 bg-surface-100 rounded-lg hover:bg-surface-200 transition-colors"
+            className="px-4 py-2 text-surface-700 bg-surface-100 rounded-lg hover:bg-surface-200 transition-colors focus:outline-none focus:ring-2 focus:ring-surface-300 focus:ring-offset-2"
           >
             Cancel
           </Button>
@@ -167,7 +167,7 @@ const taskData = {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             disabled={!title.trim()}
-            className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2 min-w-[120px] bg-primary text-white rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-primary disabled:transform-none shadow-sm hover:shadow-md active:shadow-sm"
           >
             Add Task
           </Button>
